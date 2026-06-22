@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends Photos</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>Friends Photos</h1>
+            <p>Upload photos to S3 or download everything as a ZIP archive.</p>
+        </header>
+
+        <section class="card">
+            <h2>Upload Photo</h2>
+            <form id="upload-form">
+                <input type="file" id="photo-input" accept="image/*" required>
+                <button type="submit" id="upload-btn">Upload to S3</button>
+            </form>
+            <p id="upload-status" class="status" aria-live="polite"></p>
+        </section>
+
+        <section class="card">
+            <h2>Download All</h2>
+            <p>Download every photo stored in the bucket as a single ZIP file.</p>
+            <button type="button" id="download-btn">Download Archive</button>
+            <p id="download-status" class="status" aria-live="polite"></p>
+        </section>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>
