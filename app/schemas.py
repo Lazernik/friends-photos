@@ -1,9 +1,13 @@
 from pydantic import BaseModel
 
 
-class UploadResponse(BaseModel):
+class UploadedFile(BaseModel):
     filename: str
     key: str
+
+
+class UploadResponse(BaseModel):
+    uploaded: list[UploadedFile]
     message: str
 
 

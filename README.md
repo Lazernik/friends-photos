@@ -44,6 +44,8 @@ friends-photos/
    AWS_SECRET_ACCESS_KEY=your_secret_access_key
    AWS_REGION=us-east-1
    S3_BUCKET_NAME=your-bucket-name
+   ENDPOINT_URL=https://your-s3-endpoint
+   APP_PASSWORD=choose-a-strong-shared-password
    ```
 
 4. Ensure the S3 bucket exists and your IAM user has permissions for `s3:PutObject`, `s3:GetObject`, and `s3:ListBucket`.
@@ -62,7 +64,10 @@ Open [http://127.0.0.1:8000](http://127.0.0.1:8000) in your browser.
 
 | Method | Endpoint       | Description                          |
 |--------|----------------|--------------------------------------|
-| POST   | `/api/upload`  | Upload an image file to S3           |
-| GET    | `/api/download`| Download all bucket objects as a ZIP |
+| GET    | `/api/auth/check` | Verify password (HTTP Basic Auth) |
+| POST   | `/api/upload`  | Upload images to S3 (requires auth)  |
+| GET    | `/api/download`| Download all bucket objects as a ZIP (requires auth) |
+
+Upload and download require HTTP Basic Auth. Use any username and the password from `APP_PASSWORD`.
 
 Interactive API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)

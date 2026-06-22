@@ -10,13 +10,24 @@
     <main class="container">
         <header>
             <h1>Friends Photos</h1>
-            <p>Upload photos to S3 or download everything as a ZIP archive.</p>
+            <p>Привет! Если ты оказался здесь, то это значит что ты воочию наблюдал 5 июня за создание семьи Кристины и Никиты (ну или произошел взлом жопы, если так то - УБЕДИТЕЛЬНАЯ ПРОСЬБА НЕ кидать дикпики). Этот незамысловатый интерфейс сделан для того, чтобы наши любимые гости могли поделиться своими фотографиями с того незабываемого вечера</p>
         </header>
 
+        <section class="card" id="auth-card">
+            <h2>Enter Password</h2>
+            <p>Upload and download are protected. Enter the shared password to continue.</p>
+            <form id="auth-form">
+                <input type="password" id="password-input" placeholder="Password" autocomplete="current-password" required>
+                <button type="submit" id="auth-btn">Unlock</button>
+            </form>
+            <p id="auth-status" class="status" aria-live="polite"></p>
+        </section>
+
+        <div id="protected-content" hidden>
         <section class="card">
-            <h2>Upload Photo</h2>
+            <h2>Upload Photos</h2>
             <form id="upload-form">
-                <input type="file" id="photo-input" accept="image/*" required>
+                <input type="file" id="photo-input" accept="image/*" multiple required>
                 <button type="submit" id="upload-btn">Upload to S3</button>
             </form>
             <p id="upload-status" class="status" aria-live="polite"></p>
@@ -28,6 +39,7 @@
             <button type="button" id="download-btn">Download Archive</button>
             <p id="download-status" class="status" aria-live="polite"></p>
         </section>
+        </div>
     </main>
 
     <script src="/script.js"></script>

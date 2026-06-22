@@ -52,8 +52,13 @@ form {
     align-items: center;
 }
 
-input[type="file"] {
+input[type="file"],
+input[type="password"] {
     flex: 1 1 220px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    font: inherit;
 }
 
 button {

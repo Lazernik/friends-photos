@@ -1,11 +1,13 @@
 from pathlib import PurePosixPath
 from uuid import uuid4
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import Response
+from fastapi.security import HTTPBasicCredentials
 
 from app import s3, zip_utils
-from app.schemas import UploadResponse
+from app.auth import verify_password
+from app.schemas import UploadResponse, UploadedFile
 
 router = APIRouter()
 
@@ -18,28 +20,49 @@ ALLOWED_CONTENT_TYPES = {
 }
 
 
+@router.get("/auth/check")
+async def auth_check(_: HTTPBasicCredentials = Depends(verify_password)) -> dict[str, bool]:
+    return {"ok": True}
+
+
 @router.post("/upload", response_model=UploadResponse)
-async def upload_photo(file: UploadFile = File(...)) -> UploadResponse:
-    if file.content_type not in ALLOWED_CONTENT_TYPES:
-        raise HTTPException(status_code=400, detail="Only image files are allowed.")
+async def upload_photos(
+    files: list[UploadFile] = File(...),
+    _: HTTPBasicCredentials = Depends(verify_password),
+) -> UploadResponse:
+    if not files:
+        raise HTTPException(status_code=400, detail="No files provided.")
 
-    suffix = PurePosixPath(file.filename or "photo").suffix or ".jpg"
-    key = f"photos/{uuid4().hex}{suffix}"
+    uploaded: list[UploadedFile] = []
 
-    try:
-        s3.upload_file(file.file, key, content_type=file.content_type)
-    except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Upload failed: {exc}") from exc
+    for file in files:
+        if file.content_type not in ALLOWED_CONTENT_TYPES:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Only image files are allowed. Invalid file: {file.filename or 'unknown'}",
+            )
 
-    return UploadResponse(
-        filename=file.filename or key,
-        key=key,
-        message="Photo uploaded successfully.",
-    )
+        suffix = PurePosixPath(file.filename or "photo").suffix or ".jpg"
+        key = f"photos/{uuid4().hex}{suffix}"
+
+        try:
+            s3.upload_file(file.file, key, content_type=file.content_type)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Upload failed for {file.filename or key}: {exc}",
+            ) from exc
+
+        uploaded.append(UploadedFile(filename=file.filename or key, key=key))
+
+    count = len(uploaded)
+    message = f"{count} photo{'s' if count != 1 else ''} uploaded successfully."
+
+    return UploadResponse(uploaded=uploaded, message=message)
 
 
 @router.get("/download")
-async def download_all_photos() -> Response:
+async def download_all_photos(_: HTTPBasicCredentials = Depends(verify_password)) -> Response:
     try:
         files = s3.download_all_files()
     except Exception as exc:
