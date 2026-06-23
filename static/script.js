@@ -108,12 +108,12 @@ uploadForm.addEventListener("submit", async (event) => {
 
     const files = photoInput.files;
     if (!files.length) {
-        setStatus(uploadStatus, "Please choose at least one photo.", "error");
+        setStatus(uploadStatus, "Please choose at least one photo or video.", "error");
         return;
     }
 
     uploadBtn.disabled = true;
-    setStatus(uploadStatus, `Uploading ${files.length} photo${files.length === 1 ? "" : "s"}...`, "info");
+    setStatus(uploadStatus, `Uploading ${files.length} file${files.length === 1 ? "" : "s"}...`, "info");
 
     const formData = new FormData();
     for (const file of files) {

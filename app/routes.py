@@ -17,6 +17,28 @@ ALLOWED_CONTENT_TYPES = {
     "image/gif",
     "image/webp",
     "image/bmp",
+    "video/mp4",
+    "video/webm",
+    "video/quicktime",
+    "video/x-msvideo",
+    "video/x-matroska",
+    "video/mpeg",
+    "video/3gpp",
+}
+
+DEFAULT_SUFFIX_BY_CONTENT_TYPE = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/gif": ".gif",
+    "image/webp": ".webp",
+    "image/bmp": ".bmp",
+    "video/mp4": ".mp4",
+    "video/webm": ".webm",
+    "video/quicktime": ".mov",
+    "video/x-msvideo": ".avi",
+    "video/x-matroska": ".mkv",
+    "video/mpeg": ".mpeg",
+    "video/3gpp": ".3gp",
 }
 
 
@@ -39,10 +61,12 @@ async def upload_photos(
         if file.content_type not in ALLOWED_CONTENT_TYPES:
             raise HTTPException(
                 status_code=400,
-                detail=f"Only image files are allowed. Invalid file: {file.filename or 'unknown'}",
+                detail=f"Only image and video files are allowed. Invalid file: {file.filename or 'unknown'}",
             )
 
-        suffix = PurePosixPath(file.filename or "photo").suffix or ".jpg"
+        suffix = PurePosixPath(file.filename or "file").suffix
+        if not suffix:
+            suffix = DEFAULT_SUFFIX_BY_CONTENT_TYPE.get(file.content_type, ".bin")
         key = f"photos/{uuid4().hex}{suffix}"
 
         try:
@@ -56,7 +80,7 @@ async def upload_photos(
         uploaded.append(UploadedFile(filename=file.filename or key, key=key))
 
     count = len(uploaded)
-    message = f"{count} photo{'s' if count != 1 else ''} uploaded successfully."
+    message = f"{count} file{'s' if count != 1 else ''} uploaded successfully."
 
     return UploadResponse(uploaded=uploaded, message=message)
 
