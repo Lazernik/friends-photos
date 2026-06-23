@@ -146,41 +146,41 @@ uploadForm.addEventListener("submit", async (event) => {
     }
 });
 
-downloadBtn.addEventListener("click", async () => {
-    downloadBtn.disabled = true;
-    setStatus(downloadStatus, "Preparing archive...", "info");
-
-    try {
-        const response = await fetch("/api/download", {
-            headers: authHeaders(),
-        });
-
-        await ensureAuthenticated(response);
-
-        if (!response.ok) {
-            const data = await response.json().catch(() => ({}));
-            throw new Error(data.detail || "Download failed.");
-        }
-
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "friends-photos.zip";
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        URL.revokeObjectURL(url);
-
-        setStatus(downloadStatus, "Archive downloaded.", "success");
-    } catch (error) {
-        if (error.message !== "Authentication required.") {
-            setStatus(downloadStatus, error.message, "error");
-        }
-    } finally {
-        downloadBtn.disabled = false;
-    }
-});
+// downloadBtn.addEventListener("click", async () => {
+//     downloadBtn.disabled = true;
+//     setStatus(downloadStatus, "Preparing archive...", "info");
+//
+//     try {
+//         const response = await fetch("/api/download", {
+//             headers: authHeaders(),
+//         });
+//
+//         await ensureAuthenticated(response);
+//
+//         if (!response.ok) {
+//             const data = await response.json().catch(() => ({}));
+//             throw new Error(data.detail || "Download failed.");
+//         }
+//
+//         const blob = await response.blob();
+//         const url = URL.createObjectURL(blob);
+//         const link = document.createElement("a");
+//         link.href = url;
+//         link.download = "friends-photos.zip";
+//         document.body.appendChild(link);
+//         link.click();
+//         link.remove();
+//         URL.revokeObjectURL(url);
+//
+//         setStatus(downloadStatus, "Archive downloaded.", "success");
+//     } catch (error) {
+//         if (error.message !== "Authentication required.") {
+//             setStatus(downloadStatus, error.message, "error");
+//         }
+//     } finally {
+//         downloadBtn.disabled = false;
+//     }
+// });
 
 (async function restoreSession() {
     const password = getPassword();
