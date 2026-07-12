@@ -67,7 +67,7 @@ async def upload_photos(
         suffix = PurePosixPath(file.filename or "file").suffix
         if not suffix:
             suffix = DEFAULT_SUFFIX_BY_CONTENT_TYPE.get(file.content_type, ".bin")
-        key = f"photos/{uuid4().hex}{suffix}"
+        key = f"new_photos/{uuid4().hex}{suffix}"
 
         try:
             s3.upload_file(file.file, key, content_type=file.content_type)
